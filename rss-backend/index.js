@@ -6,12 +6,29 @@ app.use(express.json())
 const MongoClient = require('mongodb').MongoClient;
 
 const url = 'mongodb://localhost:27017'
-const dbName = 'test';
+const dbName = 'feeds';
 
 MongoClient.connect(url, function(err, client) {
   console.log("Connecté à MongoDB");
   const db = client.db(dbName);
-  client.close();
+  
+  let Parser = require('rss-parser');
+  let parser = new Parser();
+
+  (async () => {
+    let feeds = await parser.parseURL('https://www.lemonde.fr/rss/en_continu.xml');
+
+    console.log(feeds.title);
+
+    feeds.items.forEach((item) => {
+      console.log(item.title);
+      console.log(item.pubDate);
+      db.collection("feeds").insertOne(item, function(err, res) {
+        if (err) throw err;        
+      })
+    });
+  })();
+  //client.close();
 });
 
 
@@ -29,6 +46,8 @@ app.get('/feeds', (req,res) => {
       console.log(item.title);
       console.log(item.pubDate);
     });
+
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
     res.status(200).json(feeds)
   })();
 })
