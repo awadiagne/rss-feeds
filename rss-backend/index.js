@@ -34,22 +34,18 @@ MongoClient.connect(url, function(err, client) {
 
 app.get('/feeds', (req,res) => {
 
-  let Parser = require('rss-parser');
-  let parser = new Parser();
-
-  (async () => {
-    let feeds = await parser.parseURL('https://www.lemonde.fr/rss/en_continu.xml');
-
-    console.log(feeds.title);
-
-    feeds.items.forEach((item) => {
-      console.log(item.title);
-      console.log(item.pubDate);
+  MongoClient.connect(url, function(err, client) {
+    if (err) throw err;
+    const db = client.db(dbName);
+    feeds = db.collection('feeds').find({}, { projection: { _id: 1, title: 1, content: 1 } }).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+      res.status(200).json(result);
+      client.close();
     });
+  });
 
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-    res.status(200).json(feeds)
-  })();
 })
 
 app.get('/feeds/:id', (req,res) => {

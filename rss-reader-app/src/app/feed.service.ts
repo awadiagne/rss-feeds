@@ -20,13 +20,11 @@ export class FeedService {
   getFeeds(): Observable<Feed[]> {
     this.messageService.add('FeedService: RSS feeds fetched');
 
-    let result = this.http.get<Feed[]>(this.REST_API_SERVER)
+    return this.http.get<Feed[]>(this.REST_API_SERVER)
       .pipe(
         tap(_ => this.log('Fetching successful')),
         catchError(this.handleError<Feed[]>('getFeeds', []))
       );
-    result.forEach(value =>  {this.log(value[1].title);});
-    return result; 
   }
 
   getFeed(id: number): Observable<Feed> {
@@ -39,7 +37,7 @@ export class FeedService {
 
   updateFeed(feed: Feed): Observable<any> {
     return this.http.put(this.REST_API_SERVER, feed, this.httpOptions).pipe(
-      tap(_ => this.log(`Updated feed`)),
+      tap(_ => this.log(`Updated feed=${feed.id}`)),
       catchError(this.handleError<any>('updateFeed'))
     );
   }
