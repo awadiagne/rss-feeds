@@ -1,7 +1,7 @@
 {
   "name": "rss-nodejs",
   "version": "1.0.0",
-  "description": "Backend  for getting RSS feeds",
+  "description": "Backend for getting RSS feeds",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
