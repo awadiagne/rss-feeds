@@ -1,0 +1,15 @@
+<div *ngIf="feed">
+
+    <h2>{{feed.title | uppercase}} Details</h2>
+    <div><span>id: </span>{{feed.id}}</div>
+    <div>
+      <label for="feed-title">Feed title: </label>
+      <input id="feed-title" [(ngModel)]="feed.title" placeholder="Title">
+    </div>
+    <div>
+        <label for="feed-content">Feed content: </label>
+        <input id="feed-content" [(ngModel)]="feed.content" placeholder="Content">
+    </div>
+
+    <button type="button" (click)="goBack()">Back to Feeds</button>
+</div>
