@@ -18,6 +18,6 @@ export class DashboardComponent implements OnInit {
 
   getFeeds(): void {
     this.feedService.getFeeds()
-      .subscribe(feeds => this.feeds = feeds.slice(1, 5));
+      .subscribe(feeds => this.feeds = feeds);
   }
 }
