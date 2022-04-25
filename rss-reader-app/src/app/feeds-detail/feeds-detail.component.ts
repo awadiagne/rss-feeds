@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Feed } from '../feed';
 import { FeedService } from '../feed.service';
@@ -11,9 +11,10 @@ import { FeedService } from '../feed.service';
   styleUrls: ['./feeds-detail.component.css']
 })
 export class FeedsDetailComponent implements OnInit {
-  @Input() feed?: Feed;
+   feed: Feed | undefined;
   
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private feedService: FeedService,
     private location: Location) { }
 
@@ -22,9 +23,16 @@ export class FeedsDetailComponent implements OnInit {
     }
     
     getFeed(): void {
-      const id = Number(this.route.snapshot.paramMap.get('id'));
+      let id:string = this.route.snapshot.paramMap.get('id')!;
       this.feedService.getFeed(id)
         .subscribe(feed => this.feed = feed);
+    }
+
+    updateFeed(): void{
+      if (this.feed) {
+        this.feedService.updateFeed(this.feed)
+          .subscribe(() => this.goBack());
+      }
     }
 
     goBack(): void {

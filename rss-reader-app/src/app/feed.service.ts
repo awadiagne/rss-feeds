@@ -27,7 +27,7 @@ export class FeedService {
       );
   }
 
-  getFeed(id: number): Observable<Feed> {
+  getFeed(id: string): Observable<Feed> {
     const url = `${this.REST_API_SERVER}/${id}`;
     return this.http.get<Feed>(url).pipe(
       tap(_ => this.log(`fetched feed id=${id}`)),
@@ -37,7 +37,7 @@ export class FeedService {
 
   updateFeed(feed: Feed): Observable<any> {
     return this.http.put(this.REST_API_SERVER, feed, this.httpOptions).pipe(
-      tap(_ => this.log(`Updated feed=${feed.id}`)),
+      tap(_ => this.log(`Updated feed=${feed._id}`)),
       catchError(this.handleError<any>('updateFeed'))
     );
   }

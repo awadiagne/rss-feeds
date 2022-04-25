@@ -3,7 +3,7 @@ label {
     color: #435960;
     font-weight: bold;
   }
-  input {
+  textarea {
     font-size: 1em;
     padding: .5rem;
   }

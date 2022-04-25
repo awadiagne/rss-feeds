@@ -23,5 +23,9 @@ export class FeedsComponent implements OnInit {
     this.feedService.getFeeds().subscribe(feeds => this.feeds = feeds);
   }
 
+  updateFeed(feed: Feed): void {
+    this.feedService.updateFeed(feed).subscribe();
+  }
+
 }
 

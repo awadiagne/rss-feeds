@@ -14,6 +14,10 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getFeeds();
+    this.feeds.forEach((feed) =>{
+      console.log(feed._id);
+      console.log(feed.title);
+    })
   }
 
   getFeeds(): void {
