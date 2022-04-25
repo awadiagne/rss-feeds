@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 
 app.use(express.json())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectId;
@@ -21,17 +23,25 @@ MongoClient.connect(url, function(err, client) {
 
     console.log(feeds.title);
 
+    db.collection("feeds").deleteMany({}, function(err, res) {
+      if (err) throw err;
+      console.log('Collection flushed');        
+    })
+
     feeds.items.forEach((item) => {
-      console.log(item.title);
-      console.log(item.pubDate);
       db.collection("feeds").insertOne(item, function(err, res) {
-        if (err) throw err;        
+        if (err) throw err;
       })
     });
+    console.log('Collection populated');        
   })();
   //client.close();
 });
 
+const cors = require('cors');
+app.use(cors({
+    origin: 'http://localhost:4200'
+}));
 
 app.get('/feeds', (req,res) => {
   console.log("Get feeds requested...");
@@ -41,7 +51,7 @@ app.get('/feeds', (req,res) => {
     const db = client.db(dbName);
     db.collection('feeds').find({}, { projection: { _id: 1, title: 1, content: 1 } }).toArray(function(err, result) {
       if (err) throw err;
-      console.log(result);
+      console.log('Results retrieved successfully');
       res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
       res.status(200).json(result);
       client.close();
@@ -60,7 +70,7 @@ app.get('/feeds/:id', (req,res) => {
 
     db.collection('feeds').findOne({ _id: ObjectID(id)}, function(err, result) {
       if (err) throw err;
-      console.log("1 document found : " + result.title);
+      console.log("1 document found : " + result);
       res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
       res.status(200).json(result);
       client.close();
@@ -69,20 +79,26 @@ app.get('/feeds/:id', (req,res) => {
 
 })
 
-app.put('/feeds/:id', (req,res) => {
-  const id = parseInt(req.params.id)
-  console.log("Put feed requested... Id : " + id);
+app.put('/feeds/', (req,res) => {
+  const body = req.body; 
+  _id = req.body._id;
+  title = body.title;
+  content = body.content;
+
+  console.log("Put feed requested... Id : " + _id);
+  console.log("Put feed requested... Title : " + title);
+  console.log("Put feed requested... Content : " + content);
 
   MongoClient.connect(url, function(err, client) {
     if (err) throw err;
     const db = client.db(dbName);
-    var myquery = { _id: id };
-    var newvalues = { $set: {title: req.body.title, content: req.body.content } };
+    var myquery = { _id: _id };
+    var newvalues = { $set: {title: title, content: content } };
 
-    db.collection('feeds').updateOne(myquery, newvalues, function(err, result) {
+    db.collection('feeds').updateOne({ "_id": ObjectID(_id) }, { $set: {"title": title, "content": content } }, function(err, result) {
       if (err) throw err;
       console.log("1 document updated");
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200/feeds');
       res.status(200).json(result);
       client.close();
     });
