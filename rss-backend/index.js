@@ -3,6 +3,7 @@ const app = express()
 
 app.use(express.json())
 app.use(express.json());
+app.use(cors)
 app.use(express.urlencoded({ extended: true }));
 
 const MongoClient = require('mongodb').MongoClient;
@@ -38,10 +39,6 @@ MongoClient.connect(url, function(err, client) {
   //client.close();
 });
 
-const cors = require('cors');
-app.use(cors({
-    origin: 'http://localhost:4200'
-}));
 
 app.get('/feeds', (req,res) => {
   console.log("Get feeds requested...");
@@ -92,13 +89,11 @@ app.put('/feeds/', (req,res) => {
   MongoClient.connect(url, function(err, client) {
     if (err) throw err;
     const db = client.db(dbName);
-    var myquery = { _id: _id };
-    var newvalues = { $set: {title: title, content: content } };
 
     db.collection('feeds').updateOne({ "_id": ObjectID(_id) }, { $set: {"title": title, "content": content } }, function(err, result) {
       if (err) throw err;
       console.log("1 document updated");
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200/feeds');
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
       res.status(200).json(result);
       client.close();
     });

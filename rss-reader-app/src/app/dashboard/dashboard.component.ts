@@ -9,19 +9,37 @@ import { FeedService } from '../feed.service';
 })
 export class DashboardComponent implements OnInit {
   feeds: Feed[] = [];
+  sliceFeeds : Feed[] = [];
+  currentPage: number = 0;
+  count: number = 0;
+  pageSize: number = 8;
 
   constructor(private feedService: FeedService) { }
 
   ngOnInit(): void {
     this.getFeeds();
-    this.feeds.forEach((feed) =>{
-      console.log(feed._id);
-      console.log(feed.title);
-    })
+    this.sliceFeeds = this.feeds.slice(this.currentPage, this.currentPage+8);
   }
 
   getFeeds(): void {
     this.feedService.getFeeds()
       .subscribe(feeds => this.feeds = feeds);
+  }
+  
+  onNext() {
+    if(this.currentPage > this.feeds.length && this.currentPage > 0){
+      alert('Last page!')
+    } else{
+      this.sliceFeeds = this.feeds.slice(this.currentPage, this.currentPage + this.pageSize);
+      this.currentPage = this.currentPage + this.pageSize;
+    }
+  }
+  onPrevious(): void {
+    if(this.currentPage < this.pageSize){
+      alert('First page!')
+    } else{
+    this.sliceFeeds = this.feeds.slice(this.currentPage - this.pageSize, this.currentPage);
+    this.currentPage = this.currentPage - this.pageSize;
+    }
   }
 }

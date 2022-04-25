@@ -18,7 +18,7 @@ export class FeedService {
   constructor(private http: HttpClient, private messageService: MessageService) { }
 
   getFeeds(): Observable<Feed[]> {
-    this.messageService.add('FeedService: RSS feeds fetched');
+    this.messageService.add('FeedService: RSS feeds fetched! Press Next to see the feeds');
 
     return this.http.get<Feed[]>(this.REST_API_SERVER)
       .pipe(

@@ -1,7 +1,12 @@
 <h2>Feeds</h2>
 <div class="feeds-menu">
-  <a *ngFor="let feed of feeds"
+  <a *ngFor="let feed of sliceFeeds"
     routerLink="/detail/{{feed._id}}">
   {{feed.title}}
   </a>
+  <br/>
+  <div>
+    <button type="button" (click)="onPrevious()">Prev</button>
+  <button type="button" (click)="onNext()">Next</button>
+  </div>
 </div>
